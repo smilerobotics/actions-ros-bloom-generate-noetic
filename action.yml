@@ -1,0 +1,25 @@
+name: 'ros-bloom-generate-noetic'
+description: 'Run bloom-generate for noetic'
+inputs:
+  targets:
+    required: true
+    description: 'Space separated list of directories of package.xml. Path should be relative to source_dir.'
+  source_dir:
+    required: true
+    description: 'Path of the top directory of sources.'
+  output_dir:
+    required: true
+    description: 'Path of the directory to which the deb files will be copied. Realtive to GITHUB_WORKSPACE.'
+  setup_dependencies_script_path:
+    required: true
+    description: 'Path of the script to be executed before bloom-generate. rosdep install will be executed in the default script.'
+    default: ''
+runs:
+  env:
+    ROS_DISTRO: noetic
+    TARGETS: ${{ inputs.targets }}
+    SOURCE_DIR: ${{ inputs.source_dir }}
+    OUTPUT_DIR: ${{ inputs.output_dir }}
+    SETUP_DEPENDENCIES_SCRIPT_PATH: ${{ inputs.setup_dependencies_script_path }}
+  using: 'docker'
+  image: "Dockerfile"

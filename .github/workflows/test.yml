@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: smilerobotics/rplidar_ros
+          ref: reconfigure
+          path: ./src/rplidar_ros
+      - uses: smilerobotics/actions-ros-bloom-generate-noetic@v1
+        with:
+          source_dir: ./src
+          targets: ./rplidar_ros
+          output_dir: ./debs
+        id: generate
+      - run: |
+          test -d ${{ steps.generate.outputs.output_dir }}
+          test -f ${{ steps.generate.outputs.rosdep_file }}
+          for a_file in ${{ steps.generate.outputs.deb_files }}; do
+            test -f ${a_file}
+          done
+        shell: bash
